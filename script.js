@@ -28,6 +28,23 @@ if (currentYear) {
     currentYear.textContent = new Date().getFullYear();
 }
 
+// Helper function to sanitize text for email body
+function sanitizeForEmail(text) {
+    if (!text) return '';
+    // Replace backticks with regular quotes
+    return text.replace(/`/g, "'")
+               .replace(/\\/g, '')
+               .replace(/\r\n/g, '\n')
+               .replace(/\r/g, '\n');
+}
+
+// Helper to format multi-line messages
+function formatMessageForEmail(message) {
+    if (!message) return '';
+    const sanitized = sanitizeForEmail(message);
+    return sanitized.split('\n').map(line => `│  ${line}`).join('\n');
+}
+
 // Contact Form Submission with mailto: formatting
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
@@ -36,12 +53,12 @@ if (contactForm) {
         
         // Get form data
         const formData = new FormData(this);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const phone = formData.get('phone');
-        const organization = formData.get('organization');
-        const service = formData.get('service');
-        const message = formData.get('message');
+        const name = sanitizeForEmail(formData.get('name'));
+        const email = sanitizeForEmail(formData.get('email'));
+        const phone = sanitizeForEmail(formData.get('phone'));
+        const organization = sanitizeForEmail(formData.get('organization'));
+        const service = sanitizeForEmail(formData.get('service'));
+        const message = sanitizeForEmail(formData.get('message'));
         
         // Show loading state
         const submitBtn = document.getElementById('submitBtn');
@@ -53,100 +70,146 @@ if (contactForm) {
         // Create formatted email content
         const emailSubject = `New Contact Form Submission: ${name} - Squard Talent`;
         
-        // Professional formatted email body with ASCII art and better structure
-        const plainTextBody = `
-╔═══════════════════════════════════════════════════════════════╗
-║                     NEW CONTACT FORM SUBMISSION               ║
-║                    Squard Talent Website                      ║
-╚═══════════════════════════════════════════════════════════════╝
-
-📋 CONTACT INFORMATION
-─────────────────────────────────────────────────────────────────
-• Name:        ${name}
-• Email:       ${email}
-• Phone:       ${phone || 'Not provided'}
-• Organization: ${organization || 'Not provided'}
-
-🎯 SERVICE INTEREST
-─────────────────────────────────────────────────────────────────
-• Interested Service: ${service || 'Not specified'}
-
-💌 MESSAGE
-─────────────────────────────────────────────────────────────────
-${message}
-
-─────────────────────────────────────────────────────────────────
-📅 Submitted: ${new Date().toLocaleString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-})}
-📍 Via: Squard Talent Contact Form
-🔗 Website: https://squardtalent.com
-
-─────────────────────────────────────────────────────────────────
-SQUARD TALENT
-Healthcare Workforce & Telehealth Solutions
-🌐 squardtalent.com | 📧 info@squardtalent.com
-─────────────────────────────────────────────────────────────────
-`;
-
-        // Alternative: Even more beautiful with box drawing characters
+        // Professional formatted email body
         const beautifulBody = `
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃                    SQUARD TALENT                              ┃
-┃              Contact Form Submission                           ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+=============================================================
+                   SQUARD TALENT
+              Contact Form Submission
+=============================================================
 
-┌───────────────────────────────────────────────────────────────┐
-│                      CONTACT DETAILS                          │
-├───────────────────────────────────────────────────────────────┤
-│  👤  Name:        ${name}
-│  📧  Email:       ${email}
-│  📱  Phone:       ${phone || 'Not provided'}
-│  🏢  Organization: ${organization || 'Not provided'}
-└───────────────────────────────────────────────────────────────┘
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                     CONTACT DETAILS
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  ● Name:        ${name}
+  ● Email:       ${email}
+  ● Phone:       ${phone || 'Not provided'}
+  ● Organization: ${organization || 'Not provided'}
 
-┌───────────────────────────────────────────────────────────────┐
-│                    SERVICE INTEREST                           │
-├───────────────────────────────────────────────────────────────┤
-│  🔍  Service:     ${service || 'Not specified'}
-└───────────────────────────────────────────────────────────────┘
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                    SERVICE INTEREST
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  ● Service:     ${service || 'Not specified'}
 
-┌───────────────────────────────────────────────────────────────┐
-│                         MESSAGE                               │
-├───────────────────────────────────────────────────────────────┤
-${message.split('\n').map(line => `│  ${line}`).join('\n')}
-└───────────────────────────────────────────────────────────────┘
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                         MESSAGE
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+${message.split('\n').map(line => `  ${line}`).join('\n')}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋  Submission Details:
-   • Date: ${new Date().toLocaleDateString('en-US', { 
-       weekday: 'long', 
-       year: 'numeric', 
-       month: 'long', 
-       day: 'numeric' 
-     })}
-   • Time: ${new Date().toLocaleTimeString('en-US', { 
-       hour: '2-digit', 
-       minute: '2-digit' 
-     })}
-   • Source: Squard Talent Website Contact Form
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                    SUBMISSION DETAILS
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  ● Date: ${new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })}
+  ● Time: ${new Date().toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })}
+  ● Source: Squard Talent Website Contact Form
 
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 Thank you for contacting Squard Talent.
 Our team will respond to your inquiry within 24 hours.
 
 Best regards,
 The Squard Talent Team
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SQUARD TALENT | Healthcare Workforce & Telehealth Solutions
+Website: https://squardtalent.com | Email: info@squardtalent.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+
+        // Alternative: Clean and simple version
+        const cleanBody = `
+╔═══════════════════════════════════════════════════════════════╗
+║                SQUARD TALENT - CONTACT FORM                  ║
+╚═══════════════════════════════════════════════════════════════╝
+
+◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼ CONTACT INFORMATION ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+• Name:        ${name}
+• Email:       ${email}
+• Phone:       ${phone || 'Not provided'}
+• Organization: ${organization || 'Not provided'}
+
+◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼ SERVICE INTEREST ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+• Service:     ${service || 'Not specified'}
+
+◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼ MESSAGE ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+${message.split('\n').map(line => `  ${line}`).join('\n')}
+
+◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼ SUBMISSION DETAILS ◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼◼
+• Submitted: ${new Date().toLocaleString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
+• Via: Squard Talent Website Contact Form
+
+════════════════════════════════════════════════════════════════
+Thank you for contacting Squard Talent.
+Our team will respond within 24 hours.
+
+Best regards,
+The Squard Talent Team
+════════════════════════════════════════════════════════════════
+Healthcare Workforce & Telehealth Solutions
+info@squardtalent.com
+════════════════════════════════════════════════════════════════
+`;
+
+        // Even cleaner version for maximum compatibility
+        const compatibleBody = `
+================================================================
+                     SQUARD TALENT
+                CONTACT FORM SUBMISSION
+================================================================
+
+CONTACT INFORMATION
+----------------------------------------------------------------
+Name:           ${name}
+Email:          ${email}
+Phone:          ${phone || 'Not provided'}
+Organization:   ${organization || 'Not provided'}
+
+SERVICE INTEREST
+----------------------------------------------------------------
+Service:        ${service || 'Not specified'}
+
+MESSAGE
+----------------------------------------------------------------
+${message}
+
+SUBMISSION DETAILS
+----------------------------------------------------------------
+Date & Time:    ${new Date().toLocaleString('en-US', { 
+                   weekday: 'long', 
+                   year: 'numeric', 
+                   month: 'long', 
+                   day: 'numeric',
+                   hour: '2-digit',
+                   minute: '2-digit'
+                 })}
+Submitted via:  Squard Talent Website Contact Form
+
+================================================================
+Thank you for contacting Squard Talent.
+Our team will respond to your inquiry within 24 hours.
+
+Best regards,
+The Squard Talent Team
+================================================================
+SQUARD TALENT | Healthcare Workforce & Telehealth Solutions
+================================================================
 `;
 
         // Create mailto link with formatted content
-        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(beautifulBody)}`;
+        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(compatibleBody)}`;
         
         // Open email client
         setTimeout(() => {
@@ -159,7 +222,7 @@ The Squard Talent Team
                     submitBtn.innerHTML = 'Send Message';
                 }
                 
-                // Show custom styled alert/modal instead of default alert
+                // Show custom styled alert/modal
                 showCustomAlert(`Thank you ${name}!`, 'Your message has been prepared. Please check your email client to review and send it.');
                 
                 // Reset form
