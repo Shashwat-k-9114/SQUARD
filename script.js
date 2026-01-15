@@ -51,35 +51,102 @@ if (contactForm) {
         }
         
         // Create formatted email content
-        const emailSubject = `New Contact Form Submission from ${name}`;
+        const emailSubject = `New Contact Form Submission: ${name} - Squard Talent`;
         
-        // Plain text version (for mailto body)
+        // Professional formatted email body with ASCII art and better structure
         const plainTextBody = `
-New Contact Form Submission - Squard Talent Website
-===================================================
+╔═══════════════════════════════════════════════════════════════╗
+║                     NEW CONTACT FORM SUBMISSION               ║
+║                    Squard Talent Website                      ║
+╚═══════════════════════════════════════════════════════════════╝
 
-CONTACT DETAILS:
-----------------
-Name: ${name}
-Email: ${email}
-Phone: ${phone || 'Not provided'}
-Organization: ${organization || 'Not provided'}
+📋 CONTACT INFORMATION
+─────────────────────────────────────────────────────────────────
+• Name:        ${name}
+• Email:       ${email}
+• Phone:       ${phone || 'Not provided'}
+• Organization: ${organization || 'Not provided'}
 
-SERVICE INTEREST:
------------------
-Service Interested In: ${service || 'Not specified'}
+🎯 SERVICE INTEREST
+─────────────────────────────────────────────────────────────────
+• Interested Service: ${service || 'Not specified'}
 
-MESSAGE:
---------
+💌 MESSAGE
+─────────────────────────────────────────────────────────────────
 ${message}
 
----
-Submitted via Squard Talent Website
-Date: ${new Date().toLocaleString()}
+─────────────────────────────────────────────────────────────────
+📅 Submitted: ${new Date().toLocaleString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+})}
+📍 Via: Squard Talent Contact Form
+🔗 Website: https://squardtalent.com
+
+─────────────────────────────────────────────────────────────────
+SQUARD TALENT
+Healthcare Workforce & Telehealth Solutions
+🌐 squardtalent.com | 📧 info@squardtalent.com
+─────────────────────────────────────────────────────────────────
+`;
+
+        // Alternative: Even more beautiful with box drawing characters
+        const beautifulBody = `
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                    SQUARD TALENT                              ┃
+┃              Contact Form Submission                           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┌───────────────────────────────────────────────────────────────┐
+│                      CONTACT DETAILS                          │
+├───────────────────────────────────────────────────────────────┤
+│  👤  Name:        ${name}
+│  📧  Email:       ${email}
+│  📱  Phone:       ${phone || 'Not provided'}
+│  🏢  Organization: ${organization || 'Not provided'}
+└───────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────┐
+│                    SERVICE INTEREST                           │
+├───────────────────────────────────────────────────────────────┤
+│  🔍  Service:     ${service || 'Not specified'}
+└───────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────┐
+│                         MESSAGE                               │
+├───────────────────────────────────────────────────────────────┤
+${message.split('\n').map(line => `│  ${line}`).join('\n')}
+└───────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋  Submission Details:
+   • Date: ${new Date().toLocaleDateString('en-US', { 
+       weekday: 'long', 
+       year: 'numeric', 
+       month: 'long', 
+       day: 'numeric' 
+     })}
+   • Time: ${new Date().toLocaleTimeString('en-US', { 
+       hour: '2-digit', 
+       minute: '2-digit' 
+     })}
+   • Source: Squard Talent Website Contact Form
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Thank you for contacting Squard Talent.
+Our team will respond to your inquiry within 24 hours.
+
+Best regards,
+The Squard Talent Team
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `;
 
         // Create mailto link with formatted content
-        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(plainTextBody)}`;
+        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(beautifulBody)}`;
         
         // Open email client
         setTimeout(() => {
@@ -92,14 +159,135 @@ Date: ${new Date().toLocaleString()}
                     submitBtn.innerHTML = 'Send Message';
                 }
                 
-                // Show success message
-                alert(`Thank you ${name}! Your message has been prepared. Please check your email client to review and send it.`);
+                // Show custom styled alert/modal instead of default alert
+                showCustomAlert(`Thank you ${name}!`, 'Your message has been prepared. Please check your email client to review and send it.');
                 
                 // Reset form
                 contactForm.reset();
             }, 2000);
         }, 500);
     });
+}
+
+// Custom alert function for better UX
+function showCustomAlert(title, message) {
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        border-top: 5px solid var(--primary-color, #1a6bb3);
+        animation: slideUp 0.3s ease;
+    `;
+    
+    // Add title
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = title;
+    titleEl.style.cssText = `
+        color: var(--primary-color, #1a6bb3);
+        margin-bottom: 15px;
+        font-family: 'Montserrat', sans-serif;
+    `;
+    
+    // Add message
+    const messageEl = document.createElement('p');
+    messageEl.textContent = message;
+    messageEl.style.cssText = `
+        margin-bottom: 25px;
+        line-height: 1.6;
+        color: #333;
+    `;
+    
+    // Add success icon
+    const icon = document.createElement('div');
+    icon.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #2ecc71; margin-bottom: 20px;"></i>';
+    
+    // Add OK button
+    const okButton = document.createElement('button');
+    okButton.textContent = 'OK';
+    okButton.style.cssText = `
+        background-color: var(--primary-color, #1a6bb3);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    `;
+    
+    okButton.onmouseover = () => {
+        okButton.style.backgroundColor = 'var(--primary-dark, #0d4a80)';
+        okButton.style.transform = 'translateY(-2px)';
+    };
+    
+    okButton.onmouseout = () => {
+        okButton.style.backgroundColor = 'var(--primary-color, #1a6bb3)';
+        okButton.style.transform = 'translateY(0)';
+    };
+    
+    okButton.onclick = () => {
+        modal.remove();
+    };
+    
+    // Assemble modal
+    modalContent.appendChild(icon);
+    modalContent.appendChild(titleEl);
+    modalContent.appendChild(messageEl);
+    modalContent.appendChild(okButton);
+    modal.appendChild(modalContent);
+    
+    // Add animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(modal);
+    
+    // Auto-close after 8 seconds
+    setTimeout(() => {
+        if (document.body.contains(modal)) {
+            modal.remove();
+        }
+    }, 8000);
 }
 
 // Smooth scroll for navigation links
