@@ -209,7 +209,7 @@ SQUARD TALENT | Healthcare Workforce & Telehealth Solutions
 `;
 
         // Create mailto link with formatted content
-        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(compatibleBody)}`;
+        const mailtoLink = `mailto:shubha.jha.2601@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(compatibleBody)}`;
         
         // Open email client
         setTimeout(() => {
