@@ -28,26 +28,77 @@ if (currentYear) {
     currentYear.textContent = new Date().getFullYear();
 }
 
-// Contact Form Submission
+// Contact Form Submission with mailto: formatting
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // In a real application, you would send this data to a server
-        // For this demo, we'll just show a success message
-        
         // Get form data
         const formData = new FormData(this);
         const name = formData.get('name');
         const email = formData.get('email');
+        const phone = formData.get('phone');
+        const organization = formData.get('organization');
         const service = formData.get('service');
+        const message = formData.get('message');
         
-        // Show success message
-        alert(`Thank you ${name}! Your message has been sent. We will contact you at ${email} regarding ${service || 'your inquiry'} soon.`);
+        // Show loading state
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing Email...';
+        }
         
-        // Reset form
-        this.reset();
+        // Create formatted email content
+        const emailSubject = `New Contact Form Submission from ${name}`;
+        
+        // Plain text version (for mailto body)
+        const plainTextBody = `
+New Contact Form Submission - Squard Talent Website
+===================================================
+
+CONTACT DETAILS:
+----------------
+Name: ${name}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Organization: ${organization || 'Not provided'}
+
+SERVICE INTEREST:
+-----------------
+Service Interested In: ${service || 'Not specified'}
+
+MESSAGE:
+--------
+${message}
+
+---
+Submitted via Squard Talent Website
+Date: ${new Date().toLocaleString()}
+`;
+
+        // Create mailto link with formatted content
+        const mailtoLink = `mailto:kashyapshashwat77@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(plainTextBody)}`;
+        
+        // Open email client
+        setTimeout(() => {
+            window.location.href = mailtoLink;
+            
+            // Reset button after a delay
+            setTimeout(() => {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Send Message';
+                }
+                
+                // Show success message
+                alert(`Thank you ${name}! Your message has been prepared. Please check your email client to review and send it.`);
+                
+                // Reset form
+                contactForm.reset();
+            }, 2000);
+        }, 500);
     });
 }
 
@@ -188,7 +239,7 @@ window.addEventListener('resize', function() {
     });
 });
 
-// Contact Form Status Messages
+// Contact Form Status Messages (for fallback)
 function showFormMessage(type, message) {
     const formMessages = document.getElementById('formMessages');
     if (!formMessages) return;
@@ -216,18 +267,3 @@ window.addEventListener('DOMContentLoaded', function() {
         showFormMessage('error', 'Sorry, there was an error sending your message. Please try again or contact us directly.');
     }
 });
-
-// Form submission with feedback
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        }
-        
-        // The form will now submit normally to send_email.php
-        // The PHP script will handle redirection with status messages
-    });
-}
